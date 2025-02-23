@@ -1,5 +1,6 @@
-services:
+version: '3.8'
 
+services:
   clickhouse:
     image: clickhouse/clickhouse-server:24.6
     container_name: clickhouse-demo-db
@@ -9,22 +10,55 @@ services:
     environment:
       - CLICKHOUSE_INIT_TIMEOUT=10000
     ports:
-      - '8123:8123'
-      - '9000:9000'
-      - '9363:9363'
-      - '1443:1443'
+      - '8123:8123'   # HTTP interface
+      - '9000:9000'   # TCP interface
+      - '9363:9363'   # MySQL interface
+      - '1443:1443'   # Alternative TCP
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - clickhouse_data:/var/log/clickhouse-server/
+      - clickhouse_logs:/var/log/clickhouse-server/
       - ./docker/config.xml:/etc/clickhouse-server/config.d/config.xml
       - ./docker/users.xml:/etc/clickhouse-server/users.d/users.xml
     networks:
-      - clickhouse-demo
+      - app-network
+
+  backend:
+    build: ./server
+    container_name: sql-editor-backend
+    depends_on:
+      - clickhouse
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - CLICKHOUSE_URL=http://clickhouse:8123
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./server:/usr/src/app
+    networks:
+      - app-network
+
+  client:
+    build: ./client
+    container_name: sql-editor-client
+    depends_on:
+      - backend
+    ports:
+      - '5173:5173'
+    environment:
+      - VITE_API_URL=http://backend:8080
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app-network
 
 volumes:
   clickhouse_data:
     driver: local
+  clickhouse_logs:
+    driver: local
 
 networks:
-  clickhouse-demo:
+  app-network:
     driver: bridge
