@@ -1,0 +1,20 @@
+.header {
+    width: 100%;
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.headerControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.switch {
+    cursor: pointer;
+}

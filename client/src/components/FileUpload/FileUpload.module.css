@@ -1,0 +1,13 @@
+.hiddenFileInput {
+    display: none;
+}
+
+.fileUploadContainer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.uploadIcon {
+    margin-top: 10px;
+}
