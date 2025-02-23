@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "es2020",
+    "moduleResolution": "node", // This ensures it looks for index files
+    "baseUrl": "./src", // Optional: Allows imports relative to `src`
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "jsx": "react-jsx", // Correct JSX support
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": ["dom", "es2017"]
+  }
+}
